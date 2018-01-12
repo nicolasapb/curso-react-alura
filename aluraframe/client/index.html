@@ -60,7 +60,9 @@
         <tfoot>
         </tfoot>
     </table>
-    <script src="js/index.js"></script>
+    <script src="js/app/models/Negociacao.js"></script>
+    <script>
+        const n1 = new Negociacao(new Date(), 30, 180);
+        console.log('volume:', n1.getVolume())
+    </script>
 </body>
-
-</html>
