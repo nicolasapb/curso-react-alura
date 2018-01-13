@@ -8,16 +8,16 @@ class NegociacaoController {
 
     adiciona(event) {
         event.preventDefault()
-        const dateHelper = new DateHelper();
+            // const dateHelper = new DateHelper();
 
         const negociacao = new Negociacao(
-            dateHelper.textToDate(this._inputData.value),
+            DateHelper.textToDate(this._inputData.value),
             this._inputQuantidade.value,
             this._inputValor.value
         )
 
         console.log('negociacao', negociacao)
-        console.log('data:', dateHelper.dateToText(negociacao.data))
+        console.log('data:', DateHelper.dateToText(negociacao.data))
 
     }
 }
