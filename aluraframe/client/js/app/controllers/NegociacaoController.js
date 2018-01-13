@@ -14,14 +14,11 @@ class NegociacaoController {
             .map((value, i) => value - i % 2)
         )
 
-        console.log('data', data)
-
         const negociacao = new Negociacao(
             data,
             this._inputQuantidade.value,
             this._inputValor.value
         )
 
-        console.log(negociacao)
     }
 }
