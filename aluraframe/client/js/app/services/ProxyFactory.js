@@ -3,10 +3,12 @@ class ProxyFactory {
         return new Proxy(objeto, {
 
             get(target, prop, receiver) {
-                if (props.includes(prop) && ProxyFactory._isFunction(target[prop])) {
+                if (props.includes(prop) &&
+                    ProxyFactory._isFunction(target[prop])) {
                     return function() {
-                        Reflect.apply(target[prop], target, arguments)
+                        const retorno = Reflect.apply(target[prop], target, arguments)
                         return acao(target)
+                        return retorno
                     }
                 }
 
@@ -14,11 +16,9 @@ class ProxyFactory {
             },
 
             set(target, prop, value, receiver) {
-                if (props.includes(prop)) {
-                    target[prop] = value;
-                    acao(target);
-                }
-                return Reflect.set(target, prop, value, receiver)
+                const retorno = Reflect.set(target, prop, value, receiver)
+                if (props.includes(prop)) acao(target)
+                return retorno
             }
         })
     }
