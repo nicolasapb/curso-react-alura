@@ -25,6 +25,24 @@ class NegociacaoController {
         this._limpaFormulario()
     }
 
+    importaNegociacoes() {
+        const xhr = new XMLHttpRequest()
+
+        xhr.open('GET', 'negociacoes/semana', true)
+
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    console.log('success kek')
+                } else {
+                    console.log('fail kek')
+                }
+            }
+        }
+
+        xhr.send()
+    }
+
     apaga() {
         this._listaNegociacoes.esvazia()
         this._mensagem.texto = 'Negociaçõe apagadas com sucesso'
