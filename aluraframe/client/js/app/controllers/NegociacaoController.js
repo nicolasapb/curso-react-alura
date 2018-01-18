@@ -33,11 +33,22 @@ class NegociacaoController {
         xhr.onreadystatechange = () => {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
-                    console.log('success kek')
+
+                    JSON.parse(xhr.responseText)
+                        .map(objeto => new Negociacao(
+                            new Date(objeto.data), objeto.quantidade, objeto.valor))
+                        .forEach(negociaco => this._listaNegociacoes.adiciona(negociaco))
+                    this._mensagem.texto = 'Negociações importadas com sucesso.'
+
                 } else {
-                    console.log('fail kek')
+                    console.log('res?', xhr.responseText)
+                    this._mensagem.texto = 'Não foi possível obter as negociações da semana'
                 }
             }
+        }
+
+        xhr.onerror = () => {
+            console.log('top fail kek')
         }
 
         xhr.send()
