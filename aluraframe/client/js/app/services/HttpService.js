@@ -21,7 +21,6 @@ class HttpService {
 
     post(url, dado) {
 
-
         return new Promise((resolve, reject) => {
 
             let xhr = new XMLHttpRequest();
