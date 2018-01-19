@@ -18,24 +18,28 @@ class NegociacaoController {
             new MensagemView($('#mensagemView')),
             'texto'
         )
+
+        ConnectionFactory
+            .getConnection()
+            .then(connection => new NegociacaoDao(connection))
+            .then(dao => dao.listaTodos(Negociacao))
+            .then(negociacoes => negociacoes
+                .forEach(negociacao => this._listaNegociacoes
+                    .adiciona(negociacao)
+                )
+            )
     }
 
     adiciona(event) {
         event.preventDefault()
+
         ConnectionFactory
             .getConnection()
-            .then(connection => {
-                new NegociacaoDao(connection)
-                    .adiciona(this._criaNegociacao())
-                    .then(negociacao => {
-                        this._listaNegociacoes.adiciona(negociacao)
-                        this._mensagem.texto = 'Negociação adicionada com sucesso'
-                        this._limpaFormulario()
-                    })
-                    .catch(erro => this._mensagem.texto = erro)
-            })
-            .catch(erro => this._mensagem.texto = erro)
+            .then(connection => new NegociacaoDao(connection))
+            .then(dao => dao.adiciona(this._criaNegociacao()))
+            .then(negociacao => this._adiciona(negociacao))
     }
+
 
     importaNegociacoes() {
         const service = new NegociacaoService()
@@ -54,6 +58,16 @@ class NegociacaoController {
         this._mensagem.texto = 'Negociaçõe apagadas com sucesso'
     }
 
+    ordena(coluna) {
+        console.log(coluna)
+        if (this._ordemAtual === coluna) {
+            this._listaNegociacoes.inverteOrdem()
+        } else {
+            this._listaNegociacoes.ordena((a, b) => a[coluna] - b[coluna])
+        }
+        this._ordemAtual = coluna
+    }
+
     _criaNegociacao() {
         return new Negociacao(
             DateHelper.textToDate(this._inputData.value),
@@ -69,12 +83,10 @@ class NegociacaoController {
         this._inputData.focus()
     }
 
-    ordena(coluna) {
-        if (this._ordemAtual === coluna) {
-            this._listaNegociacoes.inverteOrdem()
-        } else {
-            this._listaNegociacoes.ordena((a, b) => a[coluna] - b[coluna])
-        }
-        this._ordemAtual = coluna
+    _adiciona(negociacao) {
+        this._listaNegociacoes.adiciona(negociacao)
+        this._mensagem.texto = 'Negociação adicionada com sucesso'
+        this._limpaFormulario()
+        this.ordena('data')
     }
 }

@@ -16,12 +16,10 @@ var ConnectionFactory = (() => {
             return new Promise((resolve, reject) => {
 
                 if (connection) {
-                    console.log('conexao ja existe')
                     resolve(connection)
                     return
                 }
 
-                console.log('criando conexao...')
                 let openRequest = window.indexedDB.open(dbnName, version)
 
                 openRequest.onupgradeneeded = e => {

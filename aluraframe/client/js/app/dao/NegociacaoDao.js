@@ -21,7 +21,7 @@ class NegociacaoDao {
         })
     }
 
-    listaTodos(Obj, list) {
+    listaTodos(Obj) {
         return new Promise((resolve, reject) => {
 
             let cursor = this._connection
@@ -29,7 +29,7 @@ class NegociacaoDao {
                 .objectStore(this._store)
                 .openCursor()
 
-            list = []
+            let list = []
             cursor.onsuccess = e => {
                 let atual = e.target.result
                 if (atual) {
@@ -39,7 +39,6 @@ class NegociacaoDao {
                     list.push(Reflect.construct(Obj, args))
                     atual.continue()
                 } else {
-                    console.log(list)
                     resolve(list)
                 }
             }
