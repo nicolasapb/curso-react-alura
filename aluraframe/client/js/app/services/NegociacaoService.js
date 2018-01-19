@@ -45,14 +45,34 @@ class NegociacaoService {
 
     cadastra(negociacao) {
         return new Promise((resolve, reject) => {
-
             ConnectionFactory
                 .getConnection()
                 .then(connection => new NegociacaoDao(connection))
                 .then(dao => dao.adiciona(negociacao))
                 .then(negociacao => resolve(negociacao))
                 .catch(erro => reject(erro))
+        })
+    }
 
+    lista() {
+        return new Promise((resolve, reject) => {
+            ConnectionFactory
+                .getConnection()
+                .then(connection => new NegociacaoDao(connection))
+                .then(dao => dao.listaTodos(Negociacao))
+                .then(negs => resolve(negs))
+                .catch(erro => reject(erro))
+        })
+    }
+
+    apaga() {
+        return new Promise((resolve, reject) => {
+            ConnectionFactory
+                .getConnection()
+                .then(connection => new NegociacaoDao(connection))
+                .then(dao => dao.apagaTodos())
+                .then(() => resolve())
+                .catch(erro => reject(erro))
         })
     }
 }

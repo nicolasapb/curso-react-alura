@@ -4,6 +4,7 @@ class NegociacaoController {
         this._inputData = $('#data')
         this._inputQuantidade = $('#quantidade')
         this._inputValor = $('#valor')
+        this._service = new NegociacaoService()
 
         this._listaNegociacoes = new Bind(
             new ListaNegociacoes(),
@@ -21,12 +22,9 @@ class NegociacaoController {
         this._init()
     }
 
-
     _init() {
-        ConnectionFactory
-            .getConnection()
-            .then(connection => new NegociacaoDao(connection))
-            .then(dao => dao.listaTodos(Negociacao))
+        this._service
+            .lista()
             .then(negs => negs.forEach(neg => this._listaNegociacoes.adiciona(neg)))
             .catch(erro => this._mensagem.texto = erro)
 
@@ -36,20 +34,15 @@ class NegociacaoController {
     adiciona(event) {
         event.preventDefault()
 
-        const service = new NegociacaoService()
-
-        service
+        this._service
             .cadastra(this._criaNegociacao())
             .then(negociacao => this._adiciona(negociacao))
             .catch(erro => this._mensagem.texto = erro)
 
     }
 
-
     importaNegociacoes() {
-        const service = new NegociacaoService()
-
-        service
+        this._service
             .obterNegociacoes()
             .then(negs =>
                 negs.filter(neg =>
@@ -65,10 +58,8 @@ class NegociacaoController {
     }
 
     apaga() {
-        ConnectionFactory
-            .getConnection()
-            .then(connection => new NegociacaoDao(connection))
-            .then(dao => dao.apagaTodos())
+        this._service
+            .apaga()
             .then(() => this._apaga())
             .catch(erro => this._mensagem.texto = erro)
     }
