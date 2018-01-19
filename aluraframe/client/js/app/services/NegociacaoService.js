@@ -48,6 +48,7 @@ class NegociacaoService {
             ConnectionFactory
                 .getConnection()
                 .then(connection => new NegociacaoDao(connection))
+                // tbd: filtro
                 .then(dao => dao.adiciona(negociacao))
                 .then(negociacao => resolve(negociacao))
                 .catch(erro => reject(erro))
@@ -74,5 +75,11 @@ class NegociacaoService {
                 .then(() => resolve())
                 .catch(erro => reject(erro))
         })
+    }
+
+    importa(listaAtual) {
+        return this.obterNegociacoes()
+            .then(negs => negs.filter(n => !listaAtual.some(v => n.isEquals(v))))
+            .catch(erro => { throw new Error(erro) })
     }
 }

@@ -28,7 +28,7 @@ class NegociacaoController {
             .then(negs => negs.forEach(neg => this._listaNegociacoes.adiciona(neg)))
             .catch(erro => this._mensagem.texto = erro)
 
-        setInterval(() => this.importaNegociacoes(), 5000)
+        setInterval(() => this.importaNegociacoes(), 3000)
     }
 
     adiciona(event) {
@@ -43,18 +43,12 @@ class NegociacaoController {
 
     importaNegociacoes() {
         this._service
-            .obterNegociacoes()
-            .then(negs =>
-                negs.filter(neg =>
-                    !this._listaNegociacoes.negociacoes
-                    .some(n => JSON.stringify(n) == JSON.stringify(neg))
-                )
-            )
+            .importa(this._listaNegociacoes.negociacoes)
             .then(negs => {
                 negs.forEach(neg => this._listaNegociacoes.adiciona(neg))
                 this._mensagem.texto = 'Negociações importadas com sucesso.'
             })
-            .catch()
+            .catch(erro => this._mensagem.texto = erro)
     }
 
     apaga() {

@@ -22,4 +22,8 @@ class Negociacao {
     get valor() {
         return this._valor
     }
+
+    isEquals(n) {
+        return JSON.stringify(this) === JSON.stringify(n)
+    }
 }
