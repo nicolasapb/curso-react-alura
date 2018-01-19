@@ -1,9 +1,10 @@
 var ConnectionFactory = (() => {
 
-    let stores = ['negociacoes']
-    let version = 4
-    let dbnName = 'aluraframe'
+    const stores = ['negociacoes']
+    const version = 4
+    const dbnName = 'aluraframe'
     let connection = null
+    let close = null
 
     return class ConnectionFactory {
 
@@ -28,7 +29,14 @@ var ConnectionFactory = (() => {
                 }
 
                 openRequest.onsuccess = e => {
-                    if (!connection) connection = e.target.result
+                    if (!connection) {
+                        connection = e.target.result
+                        close = connection.close.bind(connection)
+                        connection.close = () => {
+                            throw new Error('Voce nao pode fechar diretamente uma conexao')
+                        }
+                    }
+
                     resolve(connection)
                 }
 
@@ -38,6 +46,13 @@ var ConnectionFactory = (() => {
                 }
 
             })
+        }
+
+        static closeConnection() {
+            if (connection) {
+                close()
+                connection = null
+            }
         }
 
         // c => connection
