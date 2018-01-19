@@ -28,6 +28,7 @@ class NegociacaoController {
                     .adiciona(negociacao)
                 )
             )
+            .catch(erro => this._mensagem.texto = erro)
     }
 
     adiciona(event) {
@@ -38,6 +39,7 @@ class NegociacaoController {
             .then(connection => new NegociacaoDao(connection))
             .then(dao => dao.adiciona(this._criaNegociacao()))
             .then(negociacao => this._adiciona(negociacao))
+            .catch(erro => this._mensagem.texto = erro)
     }
 
 
@@ -54,8 +56,12 @@ class NegociacaoController {
     }
 
     apaga() {
-        this._listaNegociacoes.esvazia()
-        this._mensagem.texto = 'Negociaçõe apagadas com sucesso'
+        ConnectionFactory
+            .getConnection()
+            .then(connection => new NegociacaoDao(connection))
+            .then(dao => dao.apagaTodos())
+            .then(() => this._apaga())
+            .catch(erro => this._mensagem.texto = erro)
     }
 
     ordena(coluna) {
@@ -89,4 +95,10 @@ class NegociacaoController {
         this._limpaFormulario()
         this.ordena('data')
     }
+
+    _apaga() {
+        this._listaNegociacoes.esvazia();
+        this._mensagem.texto = 'Negociaçõe apagadas com sucesso';
+    }
+
 }

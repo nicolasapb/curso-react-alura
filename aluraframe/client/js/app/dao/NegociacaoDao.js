@@ -23,7 +23,6 @@ class NegociacaoDao {
 
     listaTodos(Obj) {
         return new Promise((resolve, reject) => {
-
             let cursor = this._connection
                 .transaction([this._store], 'readwrite')
                 .objectStore(this._store)
@@ -44,6 +43,22 @@ class NegociacaoDao {
             }
 
             cursor.onerror = e => {
+                console.log(e.target.error)
+                reject(e.target.error.name)
+            }
+        })
+    }
+
+    apagaTodos() {
+        return new Promise((resolve, reject) => {
+            let request = this._connection
+                .transaction([this._store], 'readwrite')
+                .objectStore(this._store)
+                .clear()
+
+            request.onsuccess = e => resolve()
+
+            request.onerror = e => {
                 console.log(e.target.error)
                 reject(e.target.error.name)
             }
