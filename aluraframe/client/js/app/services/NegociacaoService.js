@@ -42,4 +42,17 @@ class NegociacaoService {
                 throw new Error('Não foi possível obter as negociações semana retrasada')
             })
     }
+
+    cadastra(negociacao) {
+        return new Promise((resolve, reject) => {
+
+            ConnectionFactory
+                .getConnection()
+                .then(connection => new NegociacaoDao(connection))
+                .then(dao => dao.adiciona(negociacao))
+                .then(negociacao => resolve(negociacao))
+                .catch(erro => reject(erro))
+
+        })
+    }
 }

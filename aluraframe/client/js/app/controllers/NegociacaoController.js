@@ -5,8 +5,6 @@ class NegociacaoController {
         this._inputQuantidade = $('#quantidade')
         this._inputValor = $('#valor')
 
-        this._ordemAtual = ''
-
         this._listaNegociacoes = new Bind(
             new ListaNegociacoes(),
             new NegociacoesView($('#negociacoesView')),
@@ -19,27 +17,32 @@ class NegociacaoController {
             'texto'
         )
 
+        this._ordemAtual = ''
+        this._init()
+    }
+
+
+    _init() {
         ConnectionFactory
             .getConnection()
             .then(connection => new NegociacaoDao(connection))
             .then(dao => dao.listaTodos(Negociacao))
-            .then(negociacoes => negociacoes
-                .forEach(negociacao => this._listaNegociacoes
-                    .adiciona(negociacao)
-                )
-            )
+            .then(negs => negs.forEach(neg => this._listaNegociacoes.adiciona(neg)))
             .catch(erro => this._mensagem.texto = erro)
+
+        setInterval(() => this.importaNegociacoes(), 5000)
     }
 
     adiciona(event) {
         event.preventDefault()
 
-        ConnectionFactory
-            .getConnection()
-            .then(connection => new NegociacaoDao(connection))
-            .then(dao => dao.adiciona(this._criaNegociacao()))
+        const service = new NegociacaoService()
+
+        service
+            .cadastra(this._criaNegociacao())
             .then(negociacao => this._adiciona(negociacao))
             .catch(erro => this._mensagem.texto = erro)
+
     }
 
 
@@ -48,6 +51,12 @@ class NegociacaoController {
 
         service
             .obterNegociacoes()
+            .then(negs =>
+                negs.filter(neg =>
+                    !this._listaNegociacoes.negociacoes
+                    .some(n => JSON.stringify(n) == JSON.stringify(neg))
+                )
+            )
             .then(negs => {
                 negs.forEach(neg => this._listaNegociacoes.adiciona(neg))
                 this._mensagem.texto = 'Negociações importadas com sucesso.'
