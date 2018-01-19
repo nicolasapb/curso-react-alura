@@ -1,4 +1,4 @@
-var ConnectionFactory = (function() {
+var ConnectionFactory = (() => {
 
     let stores = ['negociacoes']
     let version = 4
@@ -14,6 +14,13 @@ var ConnectionFactory = (function() {
         static getConnection() {
             return new Promise((resolve, reject) => {
 
+                if (connection) {
+                    console.log('conexao ja existe')
+                    resolve(connection)
+                    return
+                }
+
+                console.log('criando conexao...')
                 let openRequest = window.indexedDB.open(dbnName, version)
 
                 openRequest.onupgradeneeded = e => {
