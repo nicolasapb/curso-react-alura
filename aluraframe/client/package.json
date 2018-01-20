@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/nicolasapb/curso-react-alura/issues"
   },
-  "homepage": "https://github.com/nicolasapb/curso-react-alura#readme"
+  "homepage": "https://github.com/nicolasapb/curso-react-alura#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-preset-es2015": "^6.9.0"
+  }
 }
