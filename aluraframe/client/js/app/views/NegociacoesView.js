@@ -1,9 +1,9 @@
 "use strict";
 
-System.register(["./View"], function (_export, _context) {
+System.register(["./View", "../helpers/DateHelper"], function (_export, _context) {
     "use strict";
 
-    var View, _createClass, NegociacoesView;
+    var View, DateHelper, _createClass, NegociacoesView;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -38,6 +38,8 @@ System.register(["./View"], function (_export, _context) {
     return {
         setters: [function (_View2) {
             View = _View2.View;
+        }, function (_helpersDateHelper) {
+            DateHelper = _helpersDateHelper.DateHelper;
         }],
         execute: function () {
             _createClass = function () {
