@@ -1,3 +1,12 @@
+import { ListaNegociacoes } from '../models/ListaNegociacoes';
+import { Mensagem } from '../models/Mensagem';
+import { NegociacaoView } from '../views/NegociacaoView';
+import { MensagemView } from '../views/MensagemView';
+import { NegociacaoService } from '../services/NegociacaoService';
+import { DateHelper } from '../helpers/DateHelper';
+import { Bind } from '../helpers/Bind';
+import { Negociacao } from '../models/Negociacao';
+
 class NegociacaoController {
     constructor() {
         const $ = document.querySelector.bind(document)
