@@ -1,24 +1,25 @@
 {
-  "name": "client",
-  "version": "1.0.0",
-  "description": "aluraframe",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nicolasapb/curso-react-alura.git"
-  },
-  "author": "Nicolas Barbosa",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/nicolasapb/curso-react-alura/issues"
-  },
-  "homepage": "https://github.com/nicolasapb/curso-react-alura#readme",
-  "dependencies": {},
-  "devDependencies": {
-    "babel-cli": "^6.10.1",
-    "babel-preset-es2015": "^6.9.0"
-  }
+    "name": "client",
+    "version": "1.0.0",
+    "description": "aluraframe",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "babel js/app-es6 -d js/app"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nicolasapb/curso-react-alura.git"
+    },
+    "author": "Nicolas Barbosa",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/nicolasapb/curso-react-alura/issues"
+    },
+    "homepage": "https://github.com/nicolasapb/curso-react-alura#readme",
+    "dependencies": {},
+    "devDependencies": {
+        "babel-cli": "^6.10.1",
+        "babel-preset-es2015": "^6.9.0"
+    }
 }
