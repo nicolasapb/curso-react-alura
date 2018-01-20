@@ -59,7 +59,6 @@ class NegociacaoController {
     }
 
     ordena(coluna) {
-        console.log(coluna)
         if (this._ordemAtual === coluna) {
             this._listaNegociacoes.inverteOrdem()
         } else {
