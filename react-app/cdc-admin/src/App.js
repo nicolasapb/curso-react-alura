@@ -14,8 +14,8 @@ class App extends Component {
         $.ajax({
             url: "https://cdc-react.herokuapp.com/api/autores",
             dataType: "json",
-            success: function(resposta) {  
-                this.state = {lista: resposta}
+            success: (resposta) => {  
+                this.setState({lista: resposta})
             }
         })
     }
