@@ -7,7 +7,11 @@ class App extends Component {
 
     constructor() {
         super()
-        this.state = {lista: []}
+        this.state = {lista: [], nome: '', email: '', senha: ''}
+        this.enviaForm = this.enviaForm.bind(this)
+        this.setNome = this.setNome.bind(this);
+        this.setEmail = this.setEmail.bind(this);
+        this.setSenha = this.setSenha.bind(this);
     }
 
     componentDidMount() {
@@ -27,14 +31,28 @@ class App extends Component {
             contentType: "application/json",
             dataType: "json",
             type: 'post',
-            data: JSON.stringify({nome:'', email:'', senha:''}),
-            success: (resposta) => {
-                console.log("enviado com sucesso")
+            data: JSON.stringify({
+                nome: this.state.nome, 
+                email: this.state.email, 
+                senha: this.state.senha
+            }),
+            success: resposta =>  {
+                this.setState({lista: resposta})
             },
-            erro: (resposta) => {
-                console.log("erro", resposta)
-            }
+            erro: resposta => console.log("erro", resposta) 
         })
+    }
+
+    setNome(evento){
+        this.setState({nome:evento.target.value});
+    }
+
+    setEmail(evento){
+        this.setState({email:evento.target.value});
+    }
+
+    setSenha(evento){
+        this.setState({senha:evento.target.value});
     }
 
     render() {
@@ -46,12 +64,12 @@ class App extends Component {
 
                 <div id="menu">
                     <div className="pure-menu">
-                        <a className="pure-menu-heading" href="#">Company</a>
+                        <a className="pure-menu-heading" href="#company">Company</a>
 
                         <ul className="pure-menu-list"> 
-                            <li className="pure-menu-item"><a href="#" className="pure-menu-link">Home</a></li>
-                            <li className="pure-menu-item"><a href="#" className="pure-menu-link">Autor</a></li>
-                            <li className="pure-menu-item"><a href="#" className="pure-menu-link">Livros</a></li>
+                            <li className="pure-menu-item"><a href="#home" className="pure-menu-link">Home</a></li>
+                            <li className="pure-menu-item"><a href="#autor" className="pure-menu-link">Autor</a></li>
+                            <li className="pure-menu-item"><a href="#livros" className="pure-menu-link">Livros</a></li>
                         </ul>
                     </div>
                 </div>
@@ -65,15 +83,15 @@ class App extends Component {
                       <form className="pure-form pure-form-aligned" onSubmit={this.enviaForm} method="post">
                         <div className="pure-control-group">
                                     <label htmlFor="nome">Nome</label>
-                                    <input id="nome" type="text" name="nome" value=""/>
+                                    <input id="nome" type="text" name="nome" value={this.state.nome} onChange={this.setNome}/>
                                 </div>
                                 <div className="pure-control-group">
                                     <label htmlFor="email">Email</label>
-                                    <input id="email" type="email" name="email" value=""/>
+                                    <input id="email" type="email" name="email" value={this.state.email} onChange={this.setEmail}/>
                                 </div>
                                 <div className="pure-control-group">
                                     <label htmlFor="senha">Senha</label>
-                                    <input id="senha" type="password" name="senha"/>
+                                    <input id="senha" type="password" name="senha" value={this.state.senha} onChange={this.setSenha}/>
                                 </div>
                                 <div className="pure-control-group">
                                     <label></label>

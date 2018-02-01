@@ -1,12 +1,6 @@
 /* Código simplório, apenas para fornecer o serviço para a aplicação */
 var api = {}
-
-// var dataAtual = new Date();
-// var dataAnterior = new Date();
-// dataAnterior.setDate(dataAtual.getDate() - 7);
-// var dateRetrasada = new Date();
-// dateRetrasada.setDate(dataAtual.getDate() - 14);
-
+ 
 var autores = [
       { id: 1, nome : 'Geraldo', email : 'teste@teste.com', senha: 1234 },
       { id: 2, nome : 'Finn', email : 'kek@kek.com', senha: 1234 },
@@ -14,32 +8,9 @@ var autores = [
     ];
 
 
-api.autores = function(req, res) {
-    // var negociacoesAtuais = negociacoes.filter(function(negociacao) {
-    //     return negociacao.data > dataAnterior;
-    // });
+api.autores = function(req, res) { 
     res.json(autores);
-};
-
-// api.listaAnterior = function(req, res) {
-   
-//    var negociacoesAnteriores = negociacoes.filter(function(negociacao) {
-//         return negociacao.data < dataAtual && negociacao.data > dateRetrasada;
-//     });
-// 	setTimeout(function() {
-// 		res.json(negociacoesAnteriores);	
-// 	}, 500);
-    
-// };
-
-// api.listaRetrasada = function(req, res) {
-
-//    var negociacoesRtrasadas = negociacoes.filter(function(negociacao) {
-//         return negociacao.data < dataAnterior;
-//     });
-//     res.json(negociacoesRtrasadas);
-    
-// };
+}; 
 
 api.novoAutor = function(nome, email, senha) {
     let id = autores.length + 1
