@@ -12,7 +12,7 @@ class App extends Component {
 
     componentDidMount() {
         $.ajax({
-            url: "https://cdc-react.herokuapp.com/api/autores",
+            url: "http://localhost:8080/api/autores",
             dataType: "json",
             success: (resposta) => {  
                 this.setState({lista: resposta})
@@ -23,7 +23,7 @@ class App extends Component {
     enviaForm(evento) {
         evento.preventDefault() 
         $.ajax({
-            url: "https://cdc-react.herokuapp.com/api/autores",
+            url: "http://localhost:8080/api/autores",
             contentType: "application/json",
             dataType: "json",
             type: 'post',
@@ -48,7 +48,7 @@ class App extends Component {
                     <div className="pure-menu">
                         <a className="pure-menu-heading" href="#">Company</a>
 
-                        <ul className="pure-menu-list">
+                        <ul className="pure-menu-list"> 
                             <li className="pure-menu-item"><a href="#" className="pure-menu-link">Home</a></li>
                             <li className="pure-menu-item"><a href="#" className="pure-menu-link">Autor</a></li>
                             <li className="pure-menu-item"><a href="#" className="pure-menu-link">Livros</a></li>
@@ -62,24 +62,25 @@ class App extends Component {
                     </div>
                     <div className="content" id="content">
                     <div className="pure-form pure-form-aligned">
-                        <form className="pure-form pure-form-aligned" onSubmit={this.enviaForm} method="post">
+                      <form className="pure-form pure-form-aligned" onSubmit={this.enviaForm} method="post">
                         <div className="pure-control-group">
-                            <label htmlFor="nome">Nome</label> 
-                            <input id="nome" type="text" name="nome" value=""  />                  
-                        </div>
-                        <div className="pure-control-group">
-                            <label htmlFor="email">Email</label> 
-                            <input id="email" type="email" name="email" value=""  />                  
-                        </div>
-                        <div className="pure-control-group">
-                            <label htmlFor="senha">Senha</label> 
-                            <input id="senha" type="password" name="senha"  />                                      
-                        </div>
-                        <div className="pure-control-group">                                  
-                            <label></label> 
-                            <button type="submit" className="pure-button pure-button-primary">Gravar</button>                                    
-                        </div>
-                        </form>             
+                                    <label htmlFor="nome">Nome</label>
+                                    <input id="nome" type="text" name="nome" value=""/>
+                                </div>
+                                <div className="pure-control-group">
+                                    <label htmlFor="email">Email</label>
+                                    <input id="email" type="email" name="email" value=""/>
+                                </div>
+                                <div className="pure-control-group">
+                                    <label htmlFor="senha">Senha</label>
+                                    <input id="senha" type="password" name="senha"/>
+                                </div>
+                                <div className="pure-control-group">
+                                    <label></label>
+                                    <button type="submit" className="pure-button pure-button-primary">Gravar
+                                    </button>
+                                </div>
+                      </form>           
 
                     </div>  
                     <div>            
