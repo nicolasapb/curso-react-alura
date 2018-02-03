@@ -3,6 +3,7 @@ import $ from "jquery";
 import InputCustomizado from "./componentes/InputCustomizado";
 import SubmitCustom from "./componentes/SubmitCustom";
 import PubSub from "pubsub-js";
+import TrataErros from "./TrataErros";
 
 export default class AutorBox extends Component {
 
@@ -13,11 +14,11 @@ export default class AutorBox extends Component {
 
     componentDidMount() {
         $.ajax({
-            url: "http://localhost:8080/api/autores",
+            // url: "http://localhost:8080/api/autores",
+            url: "https://cdc-react.herokuapp.com/api/autores",
             dataType: "json",
-            success: resposta => {
-                this.setState({ lista: resposta })
-            }
+            success: res => this.setState({ lista: res }),
+            error: res => (res.status === 400) ?  new TrataErros().publicaErros(res.responseJSON) : false 
         })
 
         PubSub.subscribe('atualiza-lista-autores', 
@@ -49,7 +50,8 @@ class FormularioAutor extends Component {
     enviaForm(evento) {
         evento.preventDefault()
         $.ajax({
-            url: "http://localhost:8080/api/autores",
+            // url: "http://localhost:8080/api/autores",
+            url: "https://cdc-react.herokuapp.com/api/autores",
             contentType: "application/json",
             dataType: "json",
             type: 'post',
@@ -58,10 +60,8 @@ class FormularioAutor extends Component {
                 email: this.state.email,
                 senha: this.state.senha
             }),
-            success: novaLista => {
-                PubSub.publish('atualiza-lista-autores', novaLista)
-            },
-            erro: resposta => console.log("erro", resposta)
+            success: novaLista =>  PubSub.publish('atualiza-lista-autores', novaLista),
+            error: res =>  (res.status === 400) ? new TrataErros().publicaErros(res.responseJSON) : false
         })
     }
 
