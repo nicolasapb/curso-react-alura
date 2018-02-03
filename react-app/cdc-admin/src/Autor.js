@@ -17,8 +17,10 @@ export default class AutorBox extends Component {
             // url: "http://localhost:8080/api/autores",
             url: "https://cdc-react.herokuapp.com/api/autores",
             dataType: "json",
+
             success: res => this.setState({ lista: res }),
-            error: res => (res.status === 400) ?  new TrataErros().publicaErros(res.responseJSON) : false 
+
+            error: res => !(res.status === 200) ?  new TrataErros().publicaErros(res.responseJSON) : false 
         })
 
         PubSub.subscribe('atualiza-lista-autores', 
@@ -60,8 +62,16 @@ class FormularioAutor extends Component {
                 email: this.state.email,
                 senha: this.state.senha
             }),
-            success: novaLista =>  PubSub.publish('atualiza-lista-autores', novaLista),
-            error: res =>  (res.status === 400) ? new TrataErros().publicaErros(res.responseJSON) : false
+
+            success: novaLista =>  {
+                PubSub.publish('atualiza-lista-autores', novaLista)
+                PubSub.publishSync('limpa-erros', {})
+                this.setState({ nome: '', email: '', senha: '' })
+            },
+
+            error: res =>  (res.status === 400) ? new TrataErros().publicaErros(res.responseJSON) : false,
+
+            // beforeSend: () => PubSub.publish('limpa-erros', {})
         })
     }
 
