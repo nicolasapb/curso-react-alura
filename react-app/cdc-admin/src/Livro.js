@@ -9,7 +9,7 @@ export default class LivroBox extends Component {
 
     constructor() {
         super()
-        this.state = { lista: [] }
+        this.state = { lista: [], autores: [] }
     }
 
     componentDidMount() {
@@ -22,6 +22,16 @@ export default class LivroBox extends Component {
 
             error: res => !(res.status === 200) ? new TrataErros().publicaErros(res.responseJSON) : false
         })
+
+        $.ajax({
+            // url: "http://localhost:8080/api/autores",
+            url: "https://cdc-react.herokuapp.com/api/autores",
+            dataType: "json",
+
+            success: res => this.setState({ autores: res }),
+
+            error: res => !(res.status === 200) ? new TrataErros().publicaErros(res.responseJSON) : false
+        })        
 
         PubSub.subscribe('atualiza-lista-livros',
             (topico, novaLista) => this.setState({ lista: novaLista })
@@ -36,7 +46,7 @@ export default class LivroBox extends Component {
                 </div>
                 <br />
                 <div className="content" id="content">
-                    <FormularioLivro />
+                    <FormularioLivro autores={this.state.autores}/>
                     <TabelaLivros lista={this.state.lista} />
                 </div>
             </div>
@@ -48,13 +58,12 @@ class FormularioLivro extends Component {
 
     constructor() {
         super()
-        this.state = { titulo: '', preco: '', autor: '' }
+        this.state = { titulo: '', preco: '', autorId: '' }
         this.enviaForm = this.enviaForm.bind(this)
         this.setTitulo = this.setTitulo.bind(this);
         this.setPreco = this.setPreco.bind(this);
-        this.setAutor = this.setAutor.bind(this);
+        this.setAutorId = this.setAutorId.bind(this);
     }     
-
 
     enviaForm(evento) {
         evento.preventDefault()
@@ -67,13 +76,13 @@ class FormularioLivro extends Component {
             data: JSON.stringify({
                 titulo: this.state.titulo,
                 preco: this.state.preco,
-                autor: this.state.autor
+                autorId: this.state.autorId
             }),
 
             success: novaLista => {
                 PubSub.publish('atualiza-lista-livros', novaLista)
                 PubSub.publishSync('limpa-erros', {})
-                this.setState({ titulo: '', preco: '', autor: '' })
+                this.setState({ titulo: '', preco: '', autorId: '' })
             },
 
             error: res => (res.status === 400) ? new TrataErros().publicaErros(res.responseJSON) : false,
@@ -90,8 +99,8 @@ class FormularioLivro extends Component {
         this.setState({ preco: evento.target.value });
     }
 
-    setAutor(evento) {
-        // this.setState({ senha: evento.target.value });
+    setAutorId(evento) {
+        this.setState({ autorId: evento.target.value });
     }
 
     render() {
@@ -100,7 +109,17 @@ class FormularioLivro extends Component {
                 <form className="pure-form pure-form-aligned" onSubmit={this.enviaForm} method="post">
                     <InputCustomizado label="Título" id="titulo" type="text" name="titulo" value={this.state.titulo} onChange={this.setTitulo} />
                     <InputCustomizado label="Preço" id="preco" type="text" name="preco" value={this.state.preco} onChange={this.setPreco} />
-                    <InputCustomizado label="Autor" id="autor" type="text" name="autor" value={this.state.autor} onChange={this.setAutor} />
+                    {/* <InputCustomizado label="Autor" id="autorId" type="text" name="autorId" value={this.state.autorId} onChange={this.setAutorId} /> */}
+                    <div className="pure-control-group">
+                        <label htmlFor="autorId">Autor</label>
+                        <select id="autorId" name="autorId" onChange={this.setAutorId}>
+                            <option value="">Selecione o autor</option>
+                            {
+                                (this.props.autores) && 
+                                    this.props.autores.map(autor => <option value={autor.id}>{autor.nome}</option>)
+                            }
+                        </select>
+                    </div>
                     <SubmitCustom label="Gravar" type="submit" />
                 </form>
             </div>  
