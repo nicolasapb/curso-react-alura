@@ -34,7 +34,7 @@ class FotoInfo extends Component {
                 </div>
 
                 <p className="foto-info-legenda">
-                    <a className="foto-info-autor">autor </a>
+                    <a className="foto-info-autor">{this.props.foto.loginUsuario} </a>
                     {this.props.foto.comentario}
                 </p>
 
