@@ -9,7 +9,7 @@ export default class Timeline extends Component {
     }
 
     componentDidMount() {
-        fetch('http://localhost:8080/api/public/fotos/alots')
+        fetch(`http://localhost:8080/api/fotos?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`)
         .then(resp => resp.json()) 
         .then(fotos => this.setState({fotos})) 
         .catch(erro => console.log(erro))
@@ -19,8 +19,7 @@ export default class Timeline extends Component {
         return (
             <div className="fotos container">
                 {
-                    (this.state.fotos) &&
-                        this.state.fotos.map(foto => <FotoItem key={foto.id} foto={foto}/> )
+                    this.state.fotos.map(foto => <FotoItem key={foto.id} foto={foto}/> )
                 }
                 
             </div>            
