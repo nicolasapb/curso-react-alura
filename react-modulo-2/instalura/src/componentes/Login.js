@@ -2,10 +2,15 @@ import React, { Component } from "react";
 
 export default class Login extends Component {
 
-    constructor() {
-        super()
-        this.state = { msg: ''}
-    }
+    constructor(props) {
+        super(props)   
+        let msg = ''
+        if (this.props.location.state) {
+            msg = this.props.location.state.msg
+        }
+        this.state = { msg }
+        msg = ''
+    } 
 
     envia(evento) {
         evento.preventDefault(); 
