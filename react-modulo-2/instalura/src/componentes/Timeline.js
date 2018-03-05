@@ -9,7 +9,11 @@ export default class Timeline extends Component {
     }
 
     componentDidMount() {
-        fetch(`http://localhost:8080/api/fotos?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`)
+        const urlPerfil = `http://localhost:8080/api/fotos?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`
+        const urlPublica = `http://localhost:8080/api/public/fotos/${this.props.login}`
+        const url = (this.props.login === undefined) ? urlPerfil : urlPublica
+
+        fetch(url)
         .then(resp => {  
             if (resp.ok) {
                 return resp.json()

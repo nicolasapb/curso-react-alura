@@ -3,12 +3,18 @@ import Header from './componentes/Header'
 import Timeline from './componentes/Timeline'
 
 class App extends Component {
+
+  // constructor(props) {
+  //   super(props)
+  //   console.log(this.props)
+  // }
+
   render() {
     return (
     <div id="root">
       <div className="main">
         <Header/>
-        <Timeline/>
+        <Timeline login={this.props.login}/>
       </div> 
     </div> 
     );

@@ -25,8 +25,8 @@ function verificaAutenticacao(nextState, replace) {
             pathname: '/',
             state:  {msg: 'Faça login para acessar esta página'}
         }}/>
-    }
-    return <App/>
+    } 
+    return <App login={nextState.match.params.login}/>
 }
 
 ReactDOM.render(
