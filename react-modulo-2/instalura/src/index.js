@@ -7,10 +7,20 @@ import App from './App';
 import Login from "./componentes/Login";
 import Logout from "./componentes/Logout";
 import registerServiceWorker from './registerServiceWorker';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'; 
+import { BrowserRouter as Router, Route, Switch, Redirect, matchPath } from 'react-router-dom';
 
-function verificaAutenticacao(nextState, replace) {
-    if (localStorage.getItem('auth-token') === null) { 
+function verificaAutenticacao(nextState, replace) { 
+    const match = matchPath('/timeline', {
+        path: nextState.match.url,
+        exact: true
+    })  
+
+    let valida = false
+    if (match !== null) {
+        valida = match.isExact
+    }
+
+    if (valida && localStorage.getItem('auth-token') === null) { 
         return <Redirect to={{
             pathname: '/',
             state:  {msg: 'Faça login para acessar esta página'}
@@ -23,7 +33,7 @@ ReactDOM.render(
     (<Router>
         <Switch>
             <Route exact path="/" component={Login}/>
-            <Route exact path="/timeline" render={verificaAutenticacao}/>
+            <Route exact path="/timeline/:login?" render={verificaAutenticacao}/>
             <Route exact path="/logout" component={Logout}/>
         </Switch>
     </Router>), 
