@@ -25,9 +25,9 @@ class FotoInfo extends Component {
             <div className="foto-info">
                 <div className="foto-info-likes">
 
-                    {
+                    { 
                         (this.props.foto.likers) &&
-                            this.props.foto.likers.map(liker => <Link to={`/timeline/${liker.login}`} key={liker.id}>{liker.login},</Link>)
+                        this.props.foto.likers.map(liker => <Link to={`/timeline/${liker.login}`} key={liker.login}>{liker.login},</Link>)
                     } 
 
                     curtiram
@@ -59,10 +59,32 @@ class FotoInfo extends Component {
 }
 
 class FotoAtualizacoes extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {liked: this.props.foto.likeada}
+    }
+
+    like(event) {
+        event.preventDefault()
+        const urlLike = `http://localhost:8080/api/fotos/${this.props.foto.id}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`
+
+        fetch(urlLike, { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error('Erro ao executar a operação')
+                }
+            })
+            .then(() => this.setState({liked: !this.state.liked}))
+            .catch(erro => console.log(erro))
+    }
+
     render() {
         return (
             <section className="fotoAtualizacoes">
-                <a href="" className="fotoAtualizacoes-like">Likar</a>
+                <a onClick={this.like.bind(this)} href="" className={this.state.liked ? 'fotoAtualizacoes-like-ativo' : 'fotoAtualizacoes-like'}>Likar</a>
                 <form className="fotoAtualizacoes-form">
                     <input type="text" placeholder="Adicione um comentário..." className="fotoAtualizacoes-form-campo" />
                     <input type="submit" value="Comentar!" className="fotoAtualizacoes-form-submit" />
@@ -79,7 +101,7 @@ export default class FotoItem extends Component {
                 <FotoHeader foto={this.props.foto}/>
                 <img alt="foto" className="foto-src" src={this.props.foto.urlFoto}/>
                 <FotoInfo foto={this.props.foto}/>
-                <FotoAtualizacoes/>
+                <FotoAtualizacoes foto={this.props.foto}/>
             </div>            
         )
     }
