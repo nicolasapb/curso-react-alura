@@ -24,7 +24,10 @@ class FotoInfo extends Component {
 
     constructor(props) {
         super(props)
-        this.state = {likers: this.props.foto.likers}
+        this.state = {
+            likers: this.props.foto.likers,
+            comentarios: this.props.foto.comentarios
+        }
     }
 
     componentWillMount() {
@@ -38,6 +41,12 @@ class FotoInfo extends Component {
                 }
             }
         })
+
+        PubSub.subscribe('novos-comentarios', (topic, obj) => {
+            if (this.props.foto.id === obj.fotoId) { 
+                this.setState({ comentarios: this.state.comentarios.concat(obj.comentario) }) 
+            }
+        })
     }
 
     render() {
@@ -48,7 +57,6 @@ class FotoInfo extends Component {
                     { 
                         (this.state.likers) &&
                             this.state.likers.map(liker => <Link to={`/timeline/${liker.login}`} key={liker.login}>{liker.login} </Link>)
-
                     } 
                     {
                         (this.state.likers.length > 1) &&
@@ -65,8 +73,8 @@ class FotoInfo extends Component {
 
                 <ul className="foto-info-comentarios">
                     {
-                        (this.props.foto.comentarios) &&
-                            this.props.foto.comentarios.map(comentario => {
+                        (this.state.comentarios) &&
+                            this.state.comentarios.map(comentario => {
                                 return (
                                     <li className="comentario" key={comentario.id}>
                                         <Link to={`/timeline/${comentario.login}`} className="foto-info-autor">{comentario.login} </Link>
@@ -108,12 +116,41 @@ class FotoAtualizacoes extends Component {
             .catch(erro => console.log(erro))
     }
 
+    comentar(event) {
+        event.preventDefault()
+        const urlComentario = `http://localhost:8080/api/fotos/${this.props.foto.id}/comment?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`
+
+        const requestInfo = {
+            method: 'POST',
+            body: JSON.stringify({
+                texto: this.comentario.value
+            }),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        }
+
+        fetch(urlComentario, requestInfo)
+            .then( response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error('Erro ao realizar o comentário')
+                }
+            })
+            .then(comentario => {
+                PubSub.publish('novos-comentarios', {fotoId: this.props.foto.id, comentario})
+                this.comentario.value = ''
+            })
+            .catch(erro => console.log(erro))
+    }
+
     render() {
         return (
             <section className="fotoAtualizacoes">
                 <a onClick={this.like.bind(this)} href="" className={this.state.liked ? 'fotoAtualizacoes-like-ativo' : 'fotoAtualizacoes-like'}>Likar</a>
-                <form className="fotoAtualizacoes-form">
-                    <input type="text" placeholder="Adicione um comentário..." className="fotoAtualizacoes-form-campo" />
+                <form className="fotoAtualizacoes-form" onSubmit={this.comentar.bind(this)}>
+                    <input type="text" placeholder="Adicione um comentário..." className="fotoAtualizacoes-form-campo" ref={input => this.comentario = input} />
                     <input type="submit" value="Comentar!" className="fotoAtualizacoes-form-submit" />
                 </form>
             </section>
