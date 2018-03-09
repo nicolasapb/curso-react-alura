@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
+import { PubSub } from "pubsub-js";
 
 class FotoHeader extends Component {
     render() {
@@ -20,17 +21,40 @@ class FotoHeader extends Component {
 }
 
 class FotoInfo extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {likers: this.props.foto.likers}
+    }
+
+    componentWillMount() {
+        PubSub.subscribe('atualiza-liker', (topic, obj) => {
+            if (this.props.foto.id === obj.fotoId) {
+                const possivelLiker = this.state.likers.find(liker => liker.login === obj.liker.login) 
+                if (possivelLiker === undefined) {
+                    this.setState({ likers: this.state.likers.concat(obj.liker) })
+                } else {
+                    this.setState({ likers: this.state.likers.filter(liker => liker.login !== obj.liker.login) })
+                }
+            }
+        })
+    }
+
     render() {
         return (
             <div className="foto-info">
                 <div className="foto-info-likes">
 
                     { 
-                        (this.props.foto.likers) &&
-                        this.props.foto.likers.map(liker => <Link to={`/timeline/${liker.login}`} key={liker.login}>{liker.login},</Link>)
-                    } 
+                        (this.state.likers) &&
+                            this.state.likers.map(liker => <Link to={`/timeline/${liker.login}`} key={liker.login}>{liker.login} </Link>)
 
-                    curtiram
+                    } 
+                    {
+                        (this.state.likers.length > 1) &&
+                            'curtiruam'
+                    }
+                    
                 
                 </div>
 
@@ -77,7 +101,10 @@ class FotoAtualizacoes extends Component {
                     throw new Error('Erro ao executar a operação')
                 }
             })
-            .then(() => this.setState({liked: !this.state.liked}))
+            .then(liker => {
+                this.setState({liked: !this.state.liked})
+                PubSub.publish('atualiza-liker', {fotoId: this.props.foto.id, liker})
+            })
             .catch(erro => console.log(erro))
     }
 
