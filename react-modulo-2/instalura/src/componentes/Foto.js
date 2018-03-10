@@ -31,7 +31,7 @@ class FotoInfo extends Component {
     }
 
     componentWillMount() {
-        PubSub.subscribe('atualiza-liker', (topic, obj) => {
+        PubSub.subscribe('atualiza-liker', (topic, obj) => { 
             if (this.props.foto.id === obj.fotoId) {
                 const possivelLiker = this.state.likers.find(liker => liker.login === obj.liker.login) 
                 if (possivelLiker === undefined) {
@@ -50,19 +50,24 @@ class FotoInfo extends Component {
     }
 
     render() {
+
+        let quantosCurtiram = ''
+
+        if (this.state.likers.length > 1) {
+            quantosCurtiram = 'curtiruam'
+        } else if (this.state.likers.length === 1) {
+            quantosCurtiram = 'curtiu'
+        } 
+
         return (
             <div className="foto-info">
                 <div className="foto-info-likes">
 
                     { 
                         (this.state.likers) &&
-                            this.state.likers.map(liker => <Link to={`/timeline/${liker.login}`} key={liker.login}>{liker.login} </Link>)
+                            this.state.likers.map((liker, index) => <Link to={`/timeline/${liker.login}`} key={liker.login}>{liker.login} </Link>)
                     } 
-                    {
-                        (this.state.likers.length > 1) &&
-                            'curtiruam'
-                    }
-                    
+                    { quantosCurtiram }
                 
                 </div>
 
@@ -99,50 +104,14 @@ class FotoAtualizacoes extends Component {
 
     like(event) {
         event.preventDefault()
-        const urlLike = `http://localhost:8080/api/fotos/${this.props.foto.id}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`
-
-        fetch(urlLike, { method: 'POST' })
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                } else {
-                    throw new Error('Erro ao executar a operação')
-                }
-            })
-            .then(liker => {
-                this.setState({liked: !this.state.liked})
-                PubSub.publish('atualiza-liker', {fotoId: this.props.foto.id, liker})
-            })
-            .catch(erro => console.log(erro))
+        this.setState({ liked: !this.state.liked })
+        this.props.like(this.props.foto.id)
     }
 
     comentar(event) {
         event.preventDefault()
-        const urlComentario = `http://localhost:8080/api/fotos/${this.props.foto.id}/comment?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`
-
-        const requestInfo = {
-            method: 'POST',
-            body: JSON.stringify({
-                texto: this.comentario.value
-            }),
-            headers: new Headers({
-                'Content-Type': 'application/json'
-            })
-        }
-
-        fetch(urlComentario, requestInfo)
-            .then( response => {
-                if (response.ok) {
-                    return response.json()
-                } else {
-                    throw new Error('Erro ao realizar o comentário')
-                }
-            })
-            .then(comentario => {
-                PubSub.publish('novos-comentarios', {fotoId: this.props.foto.id, comentario})
-                this.comentario.value = ''
-            })
-            .catch(erro => console.log(erro))
+        this.props.comentar(this.props.foto.id, this.comentario.value)
+        this.comentario.value = ''
     }
 
     render() {
@@ -165,7 +134,7 @@ export default class FotoItem extends Component {
                 <FotoHeader foto={this.props.foto}/>
                 <img alt="foto" className="foto-src" src={this.props.foto.urlFoto}/>
                 <FotoInfo foto={this.props.foto}/>
-                <FotoAtualizacoes foto={this.props.foto}/>
+                <FotoAtualizacoes foto={this.props.foto} like={this.props.like} comentar={this.props.comentar}/>
             </div>            
         )
     }

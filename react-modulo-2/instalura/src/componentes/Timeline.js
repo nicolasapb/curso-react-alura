@@ -42,6 +42,49 @@ export default class Timeline extends Component {
         this.login = nextProps.login
         this.carregaFotos(nextProps) 
     }
+    
+    like(fotoId) {
+
+        const urlLike = `http://localhost:8080/api/fotos/${fotoId}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`
+
+        fetch(urlLike, { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error('Erro ao executar a operação')
+                }
+            })
+            .then(liker => {
+                PubSub.publish('atualiza-liker', { fotoId, liker })
+            })
+            .catch(erro => console.log(erro))        
+    }
+
+    comentar(fotoId, texto) {
+        const urlComentario = `http://localhost:8080/api/fotos/${fotoId}/comment?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`
+
+        const requestInfo = {
+            method: 'POST',
+            body: JSON.stringify({ texto }),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        }
+
+        fetch(urlComentario, requestInfo)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error('Erro ao realizar o comentário')
+                }
+            })
+            .then(comentario => {
+                PubSub.publish('novos-comentarios', { fotoId, comentario })
+            })
+            .catch(erro => console.log(erro))
+    }
 
     render() {
         return (
@@ -53,7 +96,7 @@ export default class Timeline extends Component {
                 >
                     {
                         (this.state.fotos.length !== 0) &&
-                        this.state.fotos.map(foto => <FotoItem key={foto.id} foto={foto} />)
+                        this.state.fotos.map(foto => <FotoItem key={foto.id} foto={foto} like={this.like} comentar={this.comentar}/>)
                     }
                 </ReactCSSTransitionGroup>
             </div>            
