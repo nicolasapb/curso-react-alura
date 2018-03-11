@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import FotoItem from "./Foto"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
-import LogicaTimeline from '../logicas/LogicaTimeline'
 
 export default class Timeline extends Component {
     "use strict";
@@ -9,15 +8,14 @@ export default class Timeline extends Component {
         super(props)
         this.state = { fotos: [] }
         this.login = this.props.login
-        this.logicaTimeline = new LogicaTimeline([])
     }
 
     carregaFotos() {
-        this.logicaTimeline.lista(this.login)
+        this.props.store.lista(this.login)
     }
 
     componentWillMount() {
-        this.logicaTimeline.subscribe(fotos => this.setState({ fotos }))
+        this.props.store.subscribe(fotos => this.setState({ fotos }))
     }
     
     componentDidMount() {
@@ -30,11 +28,11 @@ export default class Timeline extends Component {
     }
     
     like(fotoId) {
-        this.logicaTimeline.like(fotoId)     
+        this.props.store.like(fotoId)     
     }
 
     comentar(fotoId, texto) {
-        this.logicaTimeline.comentar(fotoId, texto)
+        this.props.store.comentar(fotoId, texto)
     }
 
     render() {
