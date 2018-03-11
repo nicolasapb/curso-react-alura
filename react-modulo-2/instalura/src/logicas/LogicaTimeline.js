@@ -6,6 +6,27 @@ export default class LogicaTimeline {
         this.fotos = fotos
     }
 
+    lista(login) {
+        const urlPerfil = `http://localhost:8080/api/fotos?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
+        const urlPublica = `http://localhost:8080/api/public/fotos/${login}`;
+        const url = (login === undefined) ? urlPerfil : urlPublica;
+
+        fetch(url)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                else {
+                    throw new Error(response.status);
+                }
+            })
+            .then(fotos => {
+                this.fotos = fotos
+                PubSub.publish('timeline', this.fotos) 
+            })
+            .catch(erro => console.log(erro));
+    }
+
     like(fotoId) {
         const urlLike = `http://localhost:8080/api/fotos/${fotoId}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`
 
@@ -61,5 +82,9 @@ export default class LogicaTimeline {
                 PubSub.publish('timeline', this.fotos)
             })
             .catch(erro => console.log(erro))
+    }
+
+    subscribe(callback){
+        PubSub.subscribe('timeline', (topic, fotos) => callback(fotos)) 
     }
 }

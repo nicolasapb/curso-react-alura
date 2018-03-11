@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import FotoItem from "./Foto"
-import PubSub from 'pubsub-js'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import LogicaTimeline from '../logicas/LogicaTimeline'
 
@@ -14,31 +13,11 @@ export default class Timeline extends Component {
     }
 
     carregaFotos() {
-        const urlPerfil = `http://localhost:8080/api/fotos?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
-        const urlPublica = `http://localhost:8080/api/public/fotos/${this.login}`;
-        const url = (this.login === undefined) ? urlPerfil : urlPublica;
-
-        fetch(url)
-            .then(resp => {
-                if (resp.ok) {
-                    return resp.json();
-                }
-                else {
-                    throw new Error(resp.status);
-                }
-            })
-            .then(fotos => {
-                this.setState({ fotos })
-                this.logicaTimeline = new LogicaTimeline(fotos)
-            })
-            .catch(erro => console.log(erro));
+        this.logicaTimeline.lista(this.login)
     }
 
     componentWillMount() {
-        PubSub.subscribe('timeline', (topic, fotos) => { 
-            this.setState({ fotos})
-        }) 
-                 
+        this.logicaTimeline.subscribe(fotos => this.setState({ fotos }))
     }
     
     componentDidMount() {
@@ -47,7 +26,7 @@ export default class Timeline extends Component {
 
     componentWillReceiveProps(nextProps) { 
         this.login = nextProps.login
-        this.carregaFotos(nextProps) 
+        this.carregaFotos() 
     }
     
     like(fotoId) {
