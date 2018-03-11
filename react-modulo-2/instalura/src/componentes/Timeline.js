@@ -1,20 +1,23 @@
-import React, { Component } from 'react';
-import FotoItem from "./Foto";
+import React, { Component } from 'react'
+import FotoItem from "./Foto"
 import PubSub from 'pubsub-js'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import LogicaTimeline from '../logicas/LogicaTimeline'
 
 export default class Timeline extends Component {
-
+    "use strict";
     constructor(props) {
         super(props)
         this.state = { fotos: [] }
         this.login = this.props.login
+        this.logicaTimeline = new LogicaTimeline([])
     }
 
     carregaFotos() {
         const urlPerfil = `http://localhost:8080/api/fotos?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
         const urlPublica = `http://localhost:8080/api/public/fotos/${this.login}`;
         const url = (this.login === undefined) ? urlPerfil : urlPublica;
+
         fetch(url)
             .then(resp => {
                 if (resp.ok) {
@@ -24,41 +27,18 @@ export default class Timeline extends Component {
                     throw new Error(resp.status);
                 }
             })
-            .then(fotos => this.setState({ fotos }))
+            .then(fotos => {
+                this.setState({ fotos })
+                this.logicaTimeline = new LogicaTimeline(fotos)
+            })
             .catch(erro => console.log(erro));
     }
 
     componentWillMount() {
-        PubSub.subscribe('timeline', (topic, obj) => {
-            this.setState({ fotos: obj.fotos})
-        })
-
-        // Evento de Like
-        PubSub.subscribe('atualiza-liker', (topic, obj) => {
-
-            const fotoEncontrada = this.state.fotos.find(foto => foto.id === obj.fotoId)
-            fotoEncontrada.likeada = !fotoEncontrada.likeada
-
-            const possivelLiker = fotoEncontrada.likers.find(liker => liker.login === obj.liker.login)
-
-            if (possivelLiker === undefined) {
-                fotoEncontrada.likers.push(obj.liker)
-            } else {
-                fotoEncontrada.likers = fotoEncontrada.likers.filter(liker => liker.login !== obj.liker.login)
-            }
-            this.setState({ fotos: this.state.fotos })
-
-        })
-
-        // Evento de comentario
-        PubSub.subscribe('novos-comentarios', (topic, obj) => {
-
-            const fotoEncontrada = this.state.fotos.find(foto => foto.id === obj.fotoId)
-            
-            fotoEncontrada.comentarios.push(obj.comentario)
-            
-            this.setState({ fotos: this.state.fotos })
-        })        
+        PubSub.subscribe('timeline', (topic, fotos) => { 
+            this.setState({ fotos})
+        }) 
+                 
     }
     
     componentDidMount() {
@@ -71,46 +51,11 @@ export default class Timeline extends Component {
     }
     
     like(fotoId) {
-
-        const urlLike = `http://localhost:8080/api/fotos/${fotoId}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`
-
-        fetch(urlLike, { method: 'POST' })
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                } else {
-                    throw new Error('Erro ao executar a operação')
-                }
-            })
-            .then(liker => {
-                PubSub.publish('atualiza-liker', { fotoId, liker })
-            })
-            .catch(erro => console.log(erro))        
+        this.logicaTimeline.like(fotoId)     
     }
 
     comentar(fotoId, texto) {
-        const urlComentario = `http://localhost:8080/api/fotos/${fotoId}/comment?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`
-
-        const requestInfo = {
-            method: 'POST',
-            body: JSON.stringify({ texto }),
-            headers: new Headers({
-                'Content-Type': 'application/json'
-            })
-        }
-
-        fetch(urlComentario, requestInfo)
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                } else {
-                    throw new Error('Erro ao realizar o comentário')
-                }
-            })
-            .then(comentario => {
-                PubSub.publish('novos-comentarios', { fotoId, comentario })
-            })
-            .catch(erro => console.log(erro))
+        this.logicaTimeline.comentar(fotoId, texto)
     }
 
     render() {
@@ -121,9 +66,9 @@ export default class Timeline extends Component {
                     transitionEnterTimeout={500}
                     transitionLeaveTimeout={300}
                 >
-                    {
+                    { 
                         (this.state.fotos.length !== 0) &&
-                        this.state.fotos.map(foto => <FotoItem key={foto.id} foto={foto} like={this.like} comentar={this.comentar}/>)
+                        this.state.fotos.map(foto => <FotoItem key={foto.id} foto={foto} like={this.like.bind(this)} comentar={this.comentar.bind(this)}/>)
                     }
                 </ReactCSSTransitionGroup>
             </div>            
