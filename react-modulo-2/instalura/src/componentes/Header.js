@@ -15,12 +15,12 @@ export default class Header extends Component {
             })
             .then(fotos => {
 
-                this.buscar.value = ''
+                this.buscar.value = '' 
 
                 if (fotos.length === 0) {
                     throw new Error('Usuário não encontrado')
-                }
-
+                } 
+                
                 PubSub.publish('timeline', {fotos})
 
             })

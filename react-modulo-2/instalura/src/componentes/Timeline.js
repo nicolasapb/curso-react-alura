@@ -15,7 +15,7 @@ export default class Timeline extends Component {
     }
 
     componentWillMount() {
-        this.props.store.subscribe(fotos => this.setState({ fotos }))
+        this.props.store.subscribe(fotos => this.setState({fotos}))
     }
     
     componentDidMount() {
@@ -42,7 +42,7 @@ export default class Timeline extends Component {
                     transitionName="timeline"
                     transitionEnterTimeout={500}
                     transitionLeaveTimeout={300}
-                >
+                > 
                     { 
                         (this.state.fotos.length !== 0) &&
                         this.state.fotos.map(foto => <FotoItem key={foto.id} foto={foto} like={this.like.bind(this)} comentar={this.comentar.bind(this)}/>)
